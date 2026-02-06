@@ -173,17 +173,123 @@ cd team-mancity-claude-code
 
 ## Settings 상세 설명
 
+### 핵심 설정
+
+`~/.claude/settings.json`:
+
+```json
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "teammateMode": "in-process"
+}
+```
+
 | 설정 | 값 | 설명 |
 |------|---|------|
-| `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` | `"1"` | Agent Teams 실험 기능 활성화. `TeamCreate`, `SendMessage`, `TaskCreate` 등 팀 협업 도구 사용 가능 |
-| `teammateMode` | `"in-process"` | 팀원 에이전트가 같은 프로세스에서 실행. 더 빠르고 효율적 |
+| `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` | `"1"` | Agent Teams 실험 기능 ON/OFF. 활성화 시 `TeamCreate`, `SendMessage`, `TaskCreate` 등 팀 협업 도구 사용 가능 |
+| `teammateMode` | `"in-process"` | 팀원 에이전트의 표시 모드 (아래 참고) |
 
-### teammateMode 옵션
+### Display Mode: 팀원을 어떻게 볼 것인가
 
-| 모드 | 설명 |
-|------|------|
-| `in-process` | 같은 프로세스에서 실행 (권장, 빠름) |
-| `subprocess` | 별도 서브프로세스로 실행 (격리됨, 느림) |
+#### 1. In-Process (기본값) - 모든 터미널 OK
+
+```
+┌──────────────────────────────────┐
+│  하나의 터미널 창                    │
+│                                  │
+│  현재: De Bruyne (team-lead)      │
+│  > 작업 계획을 세우고 있습니다...     │
+│                                  │
+│  Shift+Up/Down → 다른 팀원 전환     │
+│  Enter → 해당 팀원 세션 보기         │
+│  Escape → 인터럽트                  │
+└──────────────────────────────────┘
+```
+
+- 한 화면에서 팀원을 **키보드로 전환**하며 봄
+- Terminal.app, VS Code 터미널 등 **어디서든 동작**
+- 설정: `"teammateMode": "in-process"`
+- 또는 실행 시: `claude --teammate-mode in-process`
+
+#### 2. Split Panes - iTerm2 또는 tmux 필요
+
+```
+┌────────────────┬────────────────┐
+│ De Bruyne(리드)  │ Walker(PM)      │
+│ > 작업 배분중... │ > PRD 작성중...  │
+├────────────────┼────────────────┤
+│ Haaland(백엔드)  │ Foden(프론트)    │
+│ > API 구현중...  │ > UI 구현중...   │
+└────────────────┴────────────────┘
+```
+
+- 각 팀원이 **자기만의 터미널 패널**에서 동시에 보임
+- 모든 팀원의 작업 상황을 **실시간으로 한눈에** 확인 가능
+- **iTerm2** 또는 **tmux** 필수
+
+> **주의**: VS Code 통합 터미널, Windows Terminal, Ghostty에서는 Split Panes가 동작하지 않습니다.
+
+### Split Panes 세팅 가이드
+
+#### Option A: iTerm2 (macOS 권장)
+
+```bash
+# 1. iTerm2 설치
+brew install --cask iterm2
+
+# 2. iTerm2 실행 후 Claude Code 시작
+claude
+```
+
+별도 설정 불필요. iTerm2가 split pane을 네이티브로 지원합니다.
+
+#### Option B: tmux (모든 OS)
+
+```bash
+# 1. tmux 설치
+brew install tmux          # macOS
+sudo apt install tmux      # Ubuntu/Debian
+
+# 2. tmux 세션 시작
+tmux new -s mancity
+
+# 3. tmux 안에서 Claude Code 실행
+claude
+```
+
+팀이 생성되면 자동으로 tmux 패널이 분할됩니다.
+
+**tmux 기본 키 조작:**
+
+| 키 | 동작 |
+|----|------|
+| `Ctrl+B` → `"` | 수평 분할 |
+| `Ctrl+B` → `%` | 수직 분할 |
+| `Ctrl+B` → 방향키 | 패널 이동 |
+| `Ctrl+B` → `z` | 현재 패널 줌 토글 |
+| `Ctrl+B` → `d` | 세션 분리 (백그라운드) |
+
+**팀 종료 후 tmux 정리:**
+
+```bash
+# 세션 확인
+tmux ls
+
+# 세션 종료
+tmux kill-session -t mancity
+```
+
+### Display Mode 비교
+
+| | In-Process | Split Panes |
+|---|:---:|:---:|
+| **터미널 요구사항** | 아무거나 OK | iTerm2 / tmux |
+| **팀원 동시 확인** | 하나씩 전환 | 전부 동시에 |
+| **VS Code 터미널** | OK | X |
+| **설정 난이도** | 없음 | tmux 기본 지식 필요 |
+| **추천 상황** | 일반 작업 | 팀원 3명+ 동시 모니터링 |
 
 ---
 
