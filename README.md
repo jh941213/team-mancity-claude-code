@@ -6,9 +6,12 @@
 
 ### BMAD + SDD Methodology Agent Team
 
-**Manchester City 2024-25 Squad** 테마의 Claude Code 에이전트 팀
+**Manchester City 2024-25 Squad** 테마의 Claude Code 에이전트 팀 플러그인
 
 *"Together we are stronger"*
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Claude Code](https://img.shields.io/badge/Claude_Code-Agent_Teams-6366f1)](https://claude.com/claude-code)
 
 </div>
 
@@ -16,11 +19,12 @@
 
 ## Overview
 
-맨체스터 시티 선수들의 페르소나를 입힌 **8명의 Claude Code 에이전트 팀**입니다.
+맨체스터 시티 선수들의 페르소나를 입힌 **8명의 Claude Code 에이전트 팀** 플러그인입니다.
 
-BMAD(Build, Measure, Analyze, Deploy) 방법론과 SDD(Spec-Driven Development) 워크플로우를 기반으로, 각 에이전트가 실제 맨시티 선수처럼 역할을 수행합니다.
-
-유교적 상하관계(나이 기반 존댓말/반말)가 반영되어 있어, 에이전트 간 자연스러운 커뮤니케이션이 이루어집니다.
+- **BMAD** (Build, Measure, Analyze, Deploy) 방법론 기반 워크플로우
+- **SDD** (Spec-Driven Development) 3-Phase 개발 프로세스
+- **유교적 상하관계** - 나이 기반 존댓말/반말 커뮤니케이션
+- **Agent Teams** 실험 기능을 활용한 멀티 에이전트 협업
 
 ## The Squad
 
@@ -87,7 +91,131 @@ BMAD(Build, Measure, Analyze, Deploy) 방법론과 SDD(Spec-Driven Development) 
 </tr>
 </table>
 
-## SDD Workflow
+---
+
+## Prerequisites
+
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI 설치 필요
+- Claude Pro / Max / Team / Enterprise 플랜
+
+```bash
+npm install -g @anthropic-ai/claude-code
+```
+
+## Installation
+
+### Quick Install (Recommended)
+
+```bash
+git clone https://github.com/jh941213/team-mancity-claude-code.git
+cd team-mancity-claude-code
+./install.sh
+```
+
+설치 스크립트가 자동으로:
+1. `~/.claude/agents/`에 8개 에이전트 파일 배치
+2. `~/.claude/settings.json`에 Agent Teams 실험 기능 활성화
+3. `teammateMode` 설정
+
+### Manual Install
+
+#### Step 1: 에이전트 파일 복사
+
+```bash
+git clone https://github.com/jh941213/team-mancity-claude-code.git
+mkdir -p ~/.claude/agents
+cp team-mancity-claude-code/agents/*.md ~/.claude/agents/
+```
+
+#### Step 2: Agent Teams 실험 기능 활성화
+
+`~/.claude/settings.json` 파일을 열고 다음을 추가합니다:
+
+```json
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "teammateMode": "in-process"
+}
+```
+
+> **이미 settings.json이 있는 경우**, 기존 설정에 `env`와 `teammateMode`를 머지하세요:
+>
+> ```json
+> {
+>   "env": {
+>     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+>     "기존_환경변수": "값"
+>   },
+>   "teammateMode": "in-process",
+>   "기존_설정": "값"
+> }
+> ```
+
+#### Step 3: 설치 확인
+
+```bash
+# Claude Code 실행
+claude
+
+# 에이전트 목록 확인 - /agents 명령어로 확인 가능
+```
+
+### Uninstall
+
+```bash
+cd team-mancity-claude-code
+./uninstall.sh
+```
+
+---
+
+## Settings 상세 설명
+
+| 설정 | 값 | 설명 |
+|------|---|------|
+| `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` | `"1"` | Agent Teams 실험 기능 활성화. `TeamCreate`, `SendMessage`, `TaskCreate` 등 팀 협업 도구 사용 가능 |
+| `teammateMode` | `"in-process"` | 팀원 에이전트가 같은 프로세스에서 실행. 더 빠르고 효율적 |
+
+### teammateMode 옵션
+
+| 모드 | 설명 |
+|------|------|
+| `in-process` | 같은 프로세스에서 실행 (권장, 빠름) |
+| `subprocess` | 별도 서브프로세스로 실행 (격리됨, 느림) |
+
+---
+
+## Usage
+
+### 개별 에이전트 사용
+
+Claude Code에서 에이전트를 직접 호출:
+
+```
+"team-lead 에이전트로 이 기능의 작업 계획을 세워줘"
+"architect 에이전트로 시스템 아키텍처를 설계해줘"
+"backend-developer로 FastAPI 엔드포인트를 구현해줘"
+"frontend-developer로 React 컴포넌트를 만들어줘"
+"qa-engineer로 테스트 코드를 작성해줘"
+"code-reviewer로 코드 리뷰해줘"
+"security-reviewer로 보안 검토해줘"
+```
+
+### 팀 모드 사용 (Agent Teams)
+
+풀 스쿼드를 팀으로 운영:
+
+```
+"TeamCreate로 'mancity-squad' 팀을 만들고,
+Walker(pm-analyst)에게 요구사항 분석을,
+Bernardo(architect)에게 설계를 맡기고,
+Haaland(backend-developer)와 Foden(frontend-developer)이
+병렬로 개발하게 해줘"
+```
+
+### SDD 워크플로우
 
 ```
 Phase 1: Planning
@@ -106,6 +234,21 @@ Phase 3: Verification
    테스트 작성     코드 리뷰         보안 검토
 ```
 
+---
+
+## Agent Details
+
+| Agent File | Player | Role | Model | Tools |
+|-----------|--------|------|-------|-------|
+| `team-lead.md` | De Bruyne | BMAD Master Orchestrator | opus | Read, Grep, Glob |
+| `pm-analyst.md` | Walker | PM / Requirements Analyst | opus | Read, Grep, Glob |
+| `architect.md` | Bernardo Silva | System Architect | opus | Read, Grep, Glob, WebSearch |
+| `backend-developer.md` | Haaland | Python/FastAPI Backend | sonnet | Read, Write, Edit, Glob, Grep, Bash |
+| `frontend-developer.md` | Foden | React/TypeScript Frontend | sonnet | Read, Write, Edit, Glob, Grep, Bash |
+| `qa-engineer.md` | Stones | QA + TDD Guide | sonnet | Read, Write, Edit, Glob, Grep, Bash |
+| `code-reviewer.md` | Rodri | Code Quality Reviewer | opus | Read, Grep, Glob, Bash |
+| `security-reviewer.md` | Ederson | Security Analyst | opus | Read, Grep, Glob, Bash |
+
 ## Hierarchy (Age-based)
 
 에이전트 간 커뮤니케이션은 **나이 기반 유교적 상하관계**를 따릅니다:
@@ -121,42 +264,64 @@ Phase 3: Verification
 | 7 | Erling Haaland | 26 | Senior Developer | 막내, 형들에게 존댓말 |
 | 7 | Phil Foden | 26 | Senior Developer | 막내, 형들에게 존댓말 |
 
-## Installation
+---
 
-`~/.claude/agents/` 디렉토리에 에이전트 파일을 복사하면 Claude Code에서 바로 사용할 수 있습니다:
+## Customization
 
-```bash
-# 에이전트 파일 복사
-cp agents/*.md ~/.claude/agents/
+### 에이전트 수정
+
+`~/.claude/agents/` 디렉토리의 `.md` 파일을 직접 수정하면 됩니다.
+
+```yaml
+---
+name: team-lead           # 에이전트 호출 이름
+description: ...          # 에이전트 설명
+tools: Read, Grep, Glob   # 사용 가능한 도구
+model: opus               # 사용할 모델 (opus / sonnet / haiku)
+---
 ```
 
-## Agent Details
+### 모델 변경
 
-| Agent File | Role | Model | Tools |
-|-----------|------|-------|-------|
-| `team-lead.md` | BMAD Master Orchestrator | opus | Read, Grep, Glob |
-| `pm-analyst.md` | PM / Requirements Analyst | opus | Read, Grep, Glob |
-| `architect.md` | System Architect | opus | Read, Grep, Glob, WebSearch |
-| `backend-developer.md` | Python/FastAPI Backend | sonnet | Read, Write, Edit, Glob, Grep, Bash |
-| `frontend-developer.md` | React/TypeScript Frontend | sonnet | Read, Write, Edit, Glob, Grep, Bash |
-| `qa-engineer.md` | QA + TDD Guide | sonnet | Read, Write, Edit, Glob, Grep, Bash |
-| `code-reviewer.md` | Code Quality Reviewer | opus | Read, Grep, Glob, Bash |
-| `security-reviewer.md` | Security Analyst | opus | Read, Grep, Glob, Bash |
+비용 절감을 위해 모델을 변경할 수 있습니다:
 
-## Usage with Teams
+| 모델 | 특징 | 추천 용도 |
+|------|------|----------|
+| `opus` | 최고 성능, 높은 비용 | 설계, 리뷰, 의사결정 |
+| `sonnet` | 균형잡힌 성능 | 코드 구현, 테스트 |
+| `haiku` | 빠르고 저렴 | 간단한 작업, 검색 |
 
-Claude Code의 Team 기능과 함께 사용하면 에이전트들이 협업합니다:
+## Project Structure
 
 ```
-1. TeamCreate로 팀 생성
-2. TaskCreate로 작업 목록 생성
-3. Task 도구로 각 에이전트를 팀원으로 spawn
-4. SendMessage로 팀원 간 커뮤니케이션
+team-mancity-claude-code/
+├── README.md
+├── install.sh          # 자동 설치 스크립트
+├── uninstall.sh        # 제거 스크립트
+├── agents/             # 에이전트 정의 파일
+│   ├── team-lead.md           # De Bruyne - 팀 리드
+│   ├── pm-analyst.md          # Walker - PM/기획자
+│   ├── architect.md           # Bernardo - 아키텍트
+│   ├── backend-developer.md   # Haaland - 백엔드
+│   ├── frontend-developer.md  # Foden - 프론트엔드
+│   ├── qa-engineer.md         # Stones - QA
+│   ├── code-reviewer.md       # Rodri - 코드 리뷰
+│   └── security-reviewer.md   # Ederson - 보안
+└── images/             # 선수 이미지 (Wikimedia CC)
+    ├── mancity-logo.svg
+    ├── debruyne.jpg
+    ├── walker.jpg
+    ├── bernardo.jpg
+    ├── haaland.jpg
+    ├── foden.jpeg
+    ├── stones.jpg
+    ├── rodri.jpg
+    └── ederson.jpg
 ```
 
 ## Image Credits
 
-All player photos are from [Wikimedia Commons](https://commons.wikimedia.org/) and are used under Creative Commons licenses (CC BY-SA 3.0 / 4.0).
+All player photos are from [Wikimedia Commons](https://commons.wikimedia.org/) under Creative Commons licenses (CC BY-SA 3.0 / 4.0).
 
 ## License
 
@@ -166,8 +331,8 @@ MIT
 
 <div align="center">
 
-*Built with Claude Code*
+*Built with [Claude Code](https://claude.com/claude-code)*
 
-**CITYZENS**
+**CITYZENS** ⚽
 
 </div>
